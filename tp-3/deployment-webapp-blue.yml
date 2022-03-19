@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-webapp-deployment
+  namespace: production
+  labels:
+    app: web
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: web
+      version: tp-3
+  template:
+    metadata:      
+      labels:
+        app: web
+        version: tp-3
+    spec:
+      containers:
+        - name: simple-webapp-color-blue
+          image: mmumshad/simple-webapp-color
+          env:
+          - name: APP_COLOR
+            value: blue
+          ports:
+          - containerPort: 8080
+

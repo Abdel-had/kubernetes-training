@@ -1,2 +1,2 @@
 # kubernetes-training
-Cours Kubernetes (k8s)
+Cours Kubernetes d'eazytrainingfr (k8s)

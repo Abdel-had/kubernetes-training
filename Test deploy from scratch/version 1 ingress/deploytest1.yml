@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: red-webapp-deployment
+  namespace: dev
+  labels:
+    app: web
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:      
+      labels:
+        app: web
+        version: test1
+    spec:
+      containers:
+        - name: simple-webapp-color-red
+          image: mmumshad/simple-webapp-color
+          resources:
+           limits:
+             memory: "1Gi"
+             cpu: "600m"
+          env:
+          - name: APP_COLOR
+            value: red
+          ports:
+          - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: dev
+  name: devtest-service
+spec:
+  type: NodePort
+  selector: 
+    app: web
+  ports:
+  - targetPort: 8080
+    port: 8080
+    nodePort: 30008
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: devtest-ingress
+  namespace: dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+    - host: devtest.risr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: devtest-service
+                port:
+                  number: 8080
+

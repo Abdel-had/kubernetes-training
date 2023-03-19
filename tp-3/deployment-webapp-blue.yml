@@ -28,6 +28,9 @@ spec:
           env:
           - name: APP_COLOR
             value: blue
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "1000m"
           ports:
           - containerPort: 8080
-
